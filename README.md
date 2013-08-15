@@ -1,3 +1,3 @@
 # Near-Realtime Showcase
 
-A showcase for near-realtime system including visualization and a NoSQL datastore.
+A showcase for a near-realtime system including visualization and a NoSQL datastore.
