@@ -1,11 +1,3 @@
-/*
-   Near-realtime example. It listens on a MongoDB capped collection and emits
-   aggregated data to a set of websocket clients who are visualizing the
-   data stream.
-
-   Author: Tobias Trelle <tobias.trelle@codecentric.de>
-*/
-
 var static = require('node-static');
 var webfolder = new static.Server('./web');
 
@@ -17,7 +9,12 @@ var dispatcher = require('./dispatcher.js');
 var processData = function(document) {
 	console.info(document);
 	
-	aggregator.addData(document);
+	if ( document.cid == "CLEAR" ) {
+		aggregator.reset();
+	} else {
+		aggregator.addData(document);
+	}
+	
 	// TODO push to clients only every x milliseconds
 	dispatcher.emit( aggregator.aggregate() );
 };

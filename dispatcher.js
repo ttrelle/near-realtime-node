@@ -1,10 +1,3 @@
-/*
-   This websocket based dispatcher pushes the data to all
-   connected clients.  
-
-   Author: Tobias Trelle <tobias.trelle@codecentric.de>
-*/
-
 var async = require('async');
 
 var clients = [];

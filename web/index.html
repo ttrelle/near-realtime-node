@@ -13,8 +13,14 @@
 	var FILLS = {'BK': 'rgba(0, 255, 0, 0.2)', 'EL': 'rgba(255, 0, 0, 0.2)', 'SH': 'rgba(0, 0, 255, 0.2)'};
 	var orders = [];
 
+	var current_state = null;
+
+	function init() {
+		initChart();
+		initWebsocket();
+	}
+
 	function initChart() {
-		// visuals
 		var chart = new SmoothieChart();
 		forEachCategory( function(category) {
 			orders[category] = new TimeSeries();
@@ -26,14 +32,28 @@
 		});
 		chart.streamTo(document.getElementById("orders-category"), 500);
 
-		// websocket listener
+		setInterval( autoUpdate, 2000 );
+	}
+
+	function initWebsocket() {
 		var socket = io.connect('http://localhost:8080');
 		socket.on('order_aggregates', function (data) {
-			// console.log(data);
+			current_state = data;
+			updateChart(data);
+		});
+	}
+
+	function updateChart(data) {
+		console.log(data);
+		if (data) {
 			forEachCategory( function(category) {
 				orders[category].append(new Date().getTime(), data[category] );
 			});
-		});
+		}
+	}
+
+	function autoUpdate() {
+		updateChart(current_state);
 	}
 
 	function forEachCategory(onCategory) {
@@ -44,8 +64,17 @@
 
 </script>
 </head>
-<body onload="initChart()">
-	<h1>Orders by Category</h1>
-	<canvas id="orders-category" width="600" height="200" />
+<body onload="init()" style="background-color: #000000; color: #ffffff">
+	<h1>Number of Total Orders by Category</h1>
+	<canvas id="orders-category" width="600" height="200">
+	</canvas>
+
+<br/>
+Categories:
+<ul>
+<li><span style="color: #00ff00; font-weight: bold">Books</span></li>
+<li><span style="color: #0000ff; font-weight: bold">Electronics</span></li>
+<li><span style="color: #ff0000; font-weight: bold">Shoes</span></li>
+</ul>
 </body>
 </html>

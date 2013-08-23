@@ -1,10 +1,3 @@
-/*
-   Listen to a MongoDB capped collection and call a callback on
-   each received document.
-
-   Author: Tobias Trelle <tobias.trelle@codecentric.de>
-*/
-
 var mongo = require('mongodb');
 
 exports.init = function(host, port, dbName, collectionName, projection, documentCallback) {
@@ -34,7 +27,7 @@ exports.init = function(host, port, dbName, collectionName, projection, document
 	}); // open
 }
 
-var TAIL_OPTIONS = {'tailable': 1, 'sort': {'$natural': 1} };
+var TAIL_OPTIONS = {'tailable': 1, 'awaitdata': 1, 'sort': {'$natural': 1} };
 
 var handleErr = function(err) {
 	if (err) {
