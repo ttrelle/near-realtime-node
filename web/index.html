@@ -1,26 +1,50 @@
 <html>
 <head>
-<title>Order Dashboard</title>
+<title>Near-Realtime Order Dashboard</title>
 <script type="text/javascript" src="smoothie.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
-	// Randomly add a data point every 500ms
-	var random = new TimeSeries();
-	setInterval(function() {
-		random.append(new Date().getTime(), Math.random() * 10000);
-	}, 500);
+	var CATEGORIES = [
+		'BK', // books
+		'EL', // electronics
+		'SH'  // shoes
+	];
+	var STROKES = {'BK': 'rgba(0, 255, 0, 1)', 'EL': 'rgba(255, 0, 0, 1)', 'SH': 'rgba(0, 0, 255, 1)' };
+	var FILLS = {'BK': 'rgba(0, 255, 0, 0.2)', 'EL': 'rgba(255, 0, 0, 0.2)', 'SH': 'rgba(0, 0, 255, 0.2)'};
+	var orders = [];
 
-	function createTimeline() {
+	function initChart() {
+		// visuals
 		var chart = new SmoothieChart();
-		chart.addTimeSeries(random, {
-			strokeStyle : 'rgba(0, 255, 0, 1)',
-			fillStyle : 'rgba(0, 255, 0, 0.2)',
-			lineWidth : 4
+		forEachCategory( function(category) {
+			orders[category] = new TimeSeries();
+			chart.addTimeSeries(orders[category], {
+				strokeStyle : STROKES[category],
+				fillStyle : FILLS[category],
+				lineWidth : 2
+			});
 		});
 		chart.streamTo(document.getElementById("orders-category"), 500);
+
+		// websocket listener
+		var socket = io.connect('http://localhost:8080');
+		socket.on('order_aggregates', function (data) {
+			// console.log(data);
+			forEachCategory( function(category) {
+				orders[category].append(new Date().getTime(), data[category] );
+			});
+		});
 	}
+
+	function forEachCategory(onCategory) {
+		for ( var cat in CATEGORIES ) {
+			onCategory(CATEGORIES[cat]);
+		}
+	};
+
 </script>
 </head>
-<body onload="createTimeline()">
+<body onload="initChart()">
 	<h1>Orders by Category</h1>
 	<canvas id="orders-category" width="600" height="200" />
 </body>

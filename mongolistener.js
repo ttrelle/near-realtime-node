@@ -2,7 +2,7 @@ var mongo = require('mongodb');
 
 exports.init = function(host, port, dbName, collectionName, projection, documentCallback) {
 	var 
-		mongod = new mongo.Server(host, port, {"journal":"true"}),
+		mongod = new mongo.Server(host, port, {journal:true, safe:false}),
 		db = new mongo.Db(dbName, mongod);
 	
 	db.open( function(err) {
