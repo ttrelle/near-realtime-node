@@ -1,3 +1,11 @@
+/*
+   Near-realtime example. It listens on a MongoDB capped collection and emits
+   aggregated data to a set of websocket clients who are visualizing the
+   data stream.
+
+   Author: Tobias Trelle <tobias.trelle@codecentric.de>
+*/
+
 var static = require('node-static');
 var webfolder = new static.Server('./web');
 

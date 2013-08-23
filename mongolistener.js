@@ -1,3 +1,10 @@
+/*
+   Listen to a MongoDB capped collection and call a callback on
+   each received document.
+
+   Author: Tobias Trelle <tobias.trelle@codecentric.de>
+*/
+
 var mongo = require('mongodb');
 
 exports.init = function(host, port, dbName, collectionName, projection, documentCallback) {
