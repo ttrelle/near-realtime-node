@@ -1,4 +1,5 @@
 var static = require('node-static');
+var OplogWatcher = require('mongo-oplog-watcher');
 var webfolder = new static.Server('./web');
 
 var eventListener = require('./mongolistener.js');
@@ -8,6 +9,7 @@ var dispatcher = require('./dispatcher.js');
 // event handler for incoming data
 var processData = function(document) {
 	console.info(document);
+	console.info("#" + aggregator.count());
 	
 	if ( document.cid == "CLEAR" ) {
 		aggregator.reset();
@@ -33,5 +35,13 @@ httpd.listen(8080);
 dispatcher.init(httpd, 'order_aggregates');
 
 // init MongoDB listener
-eventListener.init('localhost', 27017, 'test', 'orders', {_id:0, cid:1}, processData);
+var oplog = new OplogWatcher({
+  host:"127.0.0.1" 
+  ,ns: "test.orders"
+});
+oplog.on('insert', function(data) {
+	console.info(data);
+	processData(data);
+});
+
 

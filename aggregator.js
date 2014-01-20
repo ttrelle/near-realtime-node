@@ -1,6 +1,8 @@
 var categoryCounter = {};
+var _count = 0;
 
 exports.addData = function( document ) {
+	_count++;
 	cat = document.cid;
 	if ( cat ) {
 		catCount = categoryCounter[cat];
@@ -20,6 +22,10 @@ exports.aggregate = function() {
 
 exports.reset = function() {
 	categoryCounter = {};
+}
+
+exports.count = function() {
+	return _count;
 }
 
 

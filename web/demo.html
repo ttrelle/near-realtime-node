@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>Near-Realtime Order Dashboard</title>
+<script type="text/javascript" src="smoothie.js"></script>
+<script type="text/javascript">
+	var CATEGORIES = [
+		'BK', // books
+		'EL', // electronics
+		'SH'  // shoes
+	];
+	var STROKES = {'BK': 'rgba(0, 255, 0, 1)', 'EL': 'rgba(255, 0, 0, 1)', 'SH': 'rgba(0, 0, 255, 1)' };
+	var FILLS = {'BK': 'rgba(0, 255, 0, 0.2)', 'EL': 'rgba(255, 0, 0, 0.2)', 'SH': 'rgba(0, 0, 255, 0.2)'};
+	var orders = [];
+
+	var current_state = { BK: 0, EL: 0, SH: 0 };
+
+	function init() {
+		initChart();
+	}
+
+	function initChart() {
+		var chart = new SmoothieChart();
+		forEachCategory( function(category) {
+			orders[category] = new TimeSeries();
+			chart.addTimeSeries(orders[category], {
+				strokeStyle : STROKES[category],
+				fillStyle : FILLS[category],
+				lineWidth : 2
+			});
+		});
+		chart.streamTo(document.getElementById("orders-category"), 500);
+
+		setInterval( autoUpdate, 2000 );
+	}
+
+	function updateChart(data) {
+		console.log(data);
+		if (data) {
+			forEachCategory( function(category) {
+				orders[category].append(new Date().getTime(), data[category] );
+			});
+		}
+	}
+
+	function autoUpdate() {
+		forEachCategory( function(cat) {
+			current_state[cat] = current_state[cat] + Math.floor(4 * Math.random());
+		});
+		updateChart(current_state);
+	}
+
+	function forEachCategory(onCategory) {
+		for ( var cat in CATEGORIES ) {
+			onCategory(CATEGORIES[cat]);
+		}
+	};
+
+</script>
+</head>
+<body onload="init()" style="background-color: #000000; color: #ffffff">
+	<h1>Number of Total Orders by Category</h1>
+	<canvas id="orders-category" width="600" height="200">
+	</canvas>
+
+<br/>
+Categories:
+<ul>
+<li><span style="color: #00ff00; font-weight: bold">Books</span></li>
+<li><span style="color: #0000ff; font-weight: bold">Electronics</span></li>
+<li><span style="color: #ff0000; font-weight: bold">Shoes</span></li>
+</ul>
+</body>
+</html>
