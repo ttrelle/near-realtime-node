@@ -8,7 +8,7 @@ A showcase for a very simple near-realtime system including visualization and a 
 Set up the node.js project:
 	npm install
 
-Set up a MongoDB replica set with one node running an the default port 27017. 
+Set up a MongoDB replica set with one node running on the default port 27017. 
 
 To start the node server, run
 
