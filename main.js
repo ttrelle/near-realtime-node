@@ -2,7 +2,6 @@ var static = require('node-static');
 var OplogWatcher = require('mongo-oplog-watcher');
 var webfolder = new static.Server('./web');
 
-var eventListener = require('./mongolistener.js');
 var aggregator = require('./aggregator.js');
 var dispatcher = require('./dispatcher.js');
 
